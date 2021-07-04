@@ -26,6 +26,7 @@ namespace mirrorbot
         ServiceProvider _services;
         MariaDB _mariaDB;
         JObject _config;
+        Store _store;
         public async Task mainAsync()
         {
             try
@@ -42,9 +43,11 @@ namespace mirrorbot
                 .AddSingleton<DiscordSocketClient>(new DiscordSocketClient(clientConfig))
                 .AddSingleton<CommandService>(new CommandService())
                 .AddSingleton<Papago>(new Papago(_config["naverId"].ToString(), _config["naverSecret"].ToString()))
+                .AddSingleton<Store>(new Store())
                 .AddSingleton<MariaDB>(new MariaDB()).BuildServiceProvider();
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _command = _services.GetRequiredService<CommandService>();
+            _store = _services.GetRequiredService<Store>();
 
             _client.MessageReceived += messageReceived;
             _client.ReactionAdded += reactionAdded;
@@ -75,7 +78,12 @@ namespace mirrorbot
         }
         private async Task reactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
-
+            SocketGuildUser user = message.Value.Author as SocketGuildUser;
+            if(user.Id != _client.CurrentUser.Id) return;
+            if(_store.isDoingServer(user.Guild.Id, reaction.MessageId, reaction.UserId))
+            {
+                await message.Value.Channel.SendMessageAsync(_store.emojiAdded(user.Guild.Id, message.Id, reaction.Emote, user.Id));
+            }
         }
         private Task ready()
         {
