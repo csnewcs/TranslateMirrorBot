@@ -23,11 +23,14 @@ namespace mirrorbot
                 await ReplyAsync("이미 이 서버에서 설정 중인 것이 있어요. 그걸 끝내고 새로 설정해 주세요.");
                 return;
             }
-            if(_mariaDB.getData("guild_" + Context.Guild.Id, "StartChannel", Context.Channel.Id, "StartLang") != null)
+            try
             {
-                await ReplyAsync("이미 이 채널은 번역 설정이 되어있어요.");
-                return;
-            }
+                if(_mariaDB.getData("guild_" + Context.Guild.Id, "StartChannel", Context.Channel.Id, "StartLang") != null)
+                {
+                    await ReplyAsync("이미 이 채널은 번역 설정이 되어있어요.");
+                    return;
+                }
+            } catch{}
             SocketGuildUser guildUser = Context.User as SocketGuildUser;
             if(guildUser.GuildPermissions.Administrator || guildUser.Guild.Owner == guildUser)
             {
