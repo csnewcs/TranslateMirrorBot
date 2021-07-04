@@ -82,6 +82,7 @@ namespace mirrorbot
                         // Console.WriteLine(endChannel.Name);
 
                         SocketGuildUser user = msg.Author as SocketGuildUser;
+                        
                         string endLang = _mariaDB.getData("guild_" + guild.Id, "StartChannel", channel.Id, "EndLang").ToString();
                         string translated = _papago.translate(startLang, endLang, msg.Content);
                         string send = (user.Nickname == null ? user.Username : user.Nickname) + "\n" + translated;

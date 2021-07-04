@@ -191,13 +191,10 @@ public class Store
             StartChannel StartLang  EndChannel  EndLang
             varchar(20)  varchar(2) varchar(20) varchar(2)
             */
-            if(!db.tableExits(serverId.ToString()))
-            {
-                string[] columns = new string[] {
-                    "StartChannel varchar(20)", "StartLang varchar(2)", "EndChannel varchar(20)", "EndLang varchar(2)"
-                };
-                db.createTable("guild_" + serverId.ToString(), columns);
-            }
+            string[] columns = new string[] {
+                "StartChannel varchar(20)", "StartLang varchar(2)", "EndChannel varchar(20)", "EndLang varchar(2)"
+            };
+            db.createTable("guild_" + serverId.ToString(), columns);
             string[] dataColumns = new string[] {
                 "StartChannel", "StartLang", "EndChannel", "EndLang"
             };

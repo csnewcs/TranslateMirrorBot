@@ -34,7 +34,7 @@ namespace SqlHelper
         public void createTable(string tableName, string[] columns)
         {
             connection.Open();
-            string sqlString = $"create table {tableName} (";
+            string sqlString = $"create table if not exists {tableName} (";
             foreach(var column in columns)
             {
                 sqlString += column + ",";
@@ -67,7 +67,7 @@ namespace SqlHelper
         public void removeData(string table, string where, object whereData)
         {
             connection.Open();
-            string cmd = $"DROP FROM {table} WHERE {where}='{whereData}';";
+            string cmd = $"DELETE FROM {table} WHERE {where}='{whereData}';";
             MySqlCommand command = new MySqlCommand(cmd, connection);
             command.ExecuteNonQuery();
             connection.Close();
