@@ -27,6 +27,7 @@ namespace mirrorbot
         MariaDB _mariaDB;
         JObject _config;
         Store _store;
+        Papago _papago;
         public async Task mainAsync()
         {
             try
@@ -48,6 +49,8 @@ namespace mirrorbot
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _command = _services.GetRequiredService<CommandService>();
             _store = _services.GetRequiredService<Store>();
+            _papago = _services.GetRequiredService<Papago>();
+            _mariaDB = _services.GetRequiredService<MariaDB>();
 
             _client.MessageReceived += messageReceived;
             _client.ReactionAdded += reactionAdded;
@@ -67,7 +70,25 @@ namespace mirrorbot
         {
             if(msg.Channel is SocketGuildChannel)
             {
+                SocketGuildChannel channel = msg.Channel as SocketGuildChannel;
+                SocketGuild guild = channel.Guild;
                 SocketUserMessage message = msg as SocketUserMessage;
+                if (_mariaDB.tableExits("guild_" + guild.Id))
+                {
+                    try
+                    {
+                        string startLang = _mariaDB.getData("guild_" + guild.Id, "StartChannel", channel.Id, "StartLang").ToString();
+                        SocketTextChannel endChannel = guild.GetTextChannel(ulong.Parse(_mariaDB.getData("guild_" + guild.Id, "StartChannel", channel.Id, "EndChannel").ToString()));
+                        // Console.WriteLine(endChannel.Name);
+
+                        SocketGuildUser user = msg.Author as SocketGuildUser;
+                        string endLang = _mariaDB.getData("guild_" + guild.Id, "StartChannel", channel.Id, "EndLang").ToString();
+                        string translated = _papago.translate(startLang, endLang, msg.Content);
+                        string send = (user.Nickname == null ? user.Username : user.Nickname) + "\n" + translated;
+                        await endChannel.SendMessageAsync(send);
+                    }
+                    catch{}
+                }
                 int argPos = 0;
                 if(!message.HasStringPrefix("ㅂ!", ref argPos)) return;
 

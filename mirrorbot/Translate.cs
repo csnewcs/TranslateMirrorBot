@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Web;
 using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace mirrorbot
 {
@@ -35,7 +36,10 @@ namespace mirrorbot
             stream.Close();
             response.Close();
             reader.Close();
-            return result;
+
+            string translated = JObject.Parse(result)["message"]["result"]["translatedText"].ToString();
+
+            return translated;
         }
     }
 }

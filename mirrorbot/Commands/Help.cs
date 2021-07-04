@@ -15,7 +15,7 @@ namespace mirrorbot
         [Command("도움")]
         public async Task help()
         {
-            await ReplyAsync("응답!");
+            await ReplyAsync("번역을 시작할 채널로 가서 'ㅂ!번역시작' 을 입력해 보세요");
         }
     }
 }
