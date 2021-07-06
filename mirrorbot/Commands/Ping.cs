@@ -7,7 +7,7 @@ using SqlHelper;
 
 namespace mirrorbot
 {
-    public class Help : ModuleBase<SocketCommandContext>
+    public class Ping : ModuleBase<SocketCommandContext>
     {
 
         [Command("도움")]
