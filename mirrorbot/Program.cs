@@ -68,6 +68,7 @@ namespace mirrorbot
         }
         private async Task messageReceived(SocketMessage msg)
         {
+            if (msg.Author == _client.CurrentUser) return;
             if(msg.Channel is SocketGuildChannel)
             {
                 SocketGuildChannel channel = msg.Channel as SocketGuildChannel;
