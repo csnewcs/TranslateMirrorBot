@@ -35,7 +35,7 @@ namespace mirrorbot
                     failed++;
                 }
             }
-            Console.WriteLine($"{dict.Count}개의 서버 중 {succeed}개의 서버에 공지 전송 완료({failed})개의 서버 전송 실패");
+            Console.WriteLine($"{dict.Count}개의 서버 중 {succeed}개의 서버에 공지 전송 완료({failed}개의 서버 전송 실패)");
         }
     }
 }
