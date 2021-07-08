@@ -27,7 +27,7 @@ namespace mirrorbot
         MariaDB _mariaDB;
         JObject _config;
         Store _store;
-        MainFunc _mainFunc;
+        SendTranslate _SendTranslate;
         public async Task mainAsync()
         {
             try
@@ -43,13 +43,13 @@ namespace mirrorbot
             _services = new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>(new DiscordSocketClient(clientConfig))
                 .AddSingleton<CommandService>(new CommandService())
-                .AddSingleton<MainFunc>(new MainFunc(new Papago(_config["naverId"].ToString(), _config["naverSecret"].ToString())))
+                .AddSingleton<SendTranslate>(new SendTranslate(new Papago(_config["naverId"].ToString(), _config["naverSecret"].ToString())))
                 .AddSingleton<Store>(new Store())
                 .AddSingleton<MariaDB>(new MariaDB()).BuildServiceProvider();
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _command = _services.GetRequiredService<CommandService>();
             _store = _services.GetRequiredService<Store>();
-            _mainFunc = _services.GetRequiredService<MainFunc>();
+            _SendTranslate = _services.GetRequiredService<SendTranslate>();
             _mariaDB = _services.GetRequiredService<MariaDB>();
 
             _client.MessageReceived += messageReceived;
@@ -74,7 +74,7 @@ namespace mirrorbot
                 SocketGuildChannel channel = msg.Channel as SocketGuildChannel;
                 SocketGuild guild = channel.Guild;
                 SocketUserMessage message = msg as SocketUserMessage;
-                await _mainFunc.sendToAnotherChannel(channel, message);
+                await _SendTranslate.sendToAnotherChannel(channel, message);
                 int argPos = 0;
                 if(!message.HasStringPrefix("ㅂ!", ref argPos)) return;
 

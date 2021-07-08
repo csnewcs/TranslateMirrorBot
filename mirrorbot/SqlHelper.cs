@@ -79,5 +79,11 @@ namespace SqlHelper
             reader.Close();
             return turn;
         }
+        public MySqlDataReader getAllTableData(string table)
+        {
+            string cmd = $"select * from {table};";
+            MySqlCommand command = new MySqlCommand(cmd, connection);
+            return command.ExecuteReader();
+        }
     }
 }

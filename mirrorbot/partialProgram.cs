@@ -18,11 +18,21 @@ namespace mirrorbot
             json.Add("naverSecret", Console.ReadLine());
             File.WriteAllText("config.json", json.ToString());
         }
-        void command(string command)
+        async void command(string command)
         {
             //콘솔에서의 커맨드
             //notice: notice.txt에 있는 내용을 여러 서버들의 공지 받는 곳으로 보냄
             //shutdown: 봇을 꺼버림
+            if(command == "notice")
+            {
+                SendNotice notice = new SendNotice();
+                await notice.sendNotice(_mariaDB, _client, File.ReadAllText("notice.txt"));
+            }
+            else if(command == "shutdown")
+            {
+                Console.WriteLine("bye");
+                Environment.Exit(0);
+            }
         }
     }
 }

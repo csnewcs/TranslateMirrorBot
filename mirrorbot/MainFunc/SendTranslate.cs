@@ -7,11 +7,11 @@ using SqlHelper;
 
 namespace mirrorbot
 {
-    class MainFunc
+    class SendTranslate
     {
         MariaDB db = new MariaDB();
         Papago papago;
-        public MainFunc(Papago _papago) => papago = _papago;
+        public SendTranslate(Papago _papago) => papago = _papago;
         public async Task sendToAnotherChannel(SocketGuildChannel channel, SocketUserMessage message)
         {
             if(!isEnabled(channel)) return;
