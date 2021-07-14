@@ -14,7 +14,7 @@ namespace SqlHelper
         {
             string connectString = "server=localhost;Database=translatemirrorbot;Uid=translatemirrorbot";
             connection = new MySqlConnection(connectString);
-            connection.Open();
+            // connection.Open();
         }
         public bool tableExits(string tableName)
         {
