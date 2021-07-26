@@ -16,6 +16,24 @@ namespace SqlHelper
             connection = new MySqlConnection(connectString);
             // connection.Open();
         }
+        public Dictionary<string, object> getChannelData(ulong channel_id, ulong guild_id)
+        {
+            connection.Open();
+            string sqlCommand = $"SELECT * FROM guild_{guild_id} WHERE StartChannel = {channel_id}";
+            MySqlCommand command = new MySqlCommand(sqlCommand, connection);
+            MySqlDataReader reader = command.ExecuteReader();
+            Dictionary<string, object> channelData = new Dictionary<string, object>();
+            while (reader.Read())
+            {
+                channelData.Add("EndChannel", reader["EndChannel"]);
+                channelData.Add("StartLang", reader["StartLang"]);
+                channelData.Add("EndLang", reader["EndLang"]);
+            }
+            reader.Close();
+            connection.Close();
+            return channelData;
+        }
+
         public bool tableExits(string tableName)
         {
             connection.Open();

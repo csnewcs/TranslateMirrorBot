@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.IO;
+using System.Collections.Generic;
 using Discord;
 using Discord.WebSocket;
 using SqlHelper;
@@ -38,9 +39,10 @@ namespace mirrorbot
         }
         private SocketTextChannel getInfo(SocketGuildChannel channel, out string startLang, out string endLang)
         {
-            startLang = db.getData("guild_" + channel.Guild.Id, "StartChannel", channel.Id, "StartLang").ToString();
-            SocketTextChannel endChannel = channel.Guild.GetTextChannel(Convert.ToUInt64(db.getData("guild_" + channel.Guild.Id, "StartChannel", channel.Id, "EndChannel")));
-            endLang = db.getData("guild_" + channel.Guild.Id, "StartChannel", channel.Id, "EndLang").ToString();
+            Dictionary<string, object> data = db.getChannelData(channel.Id, channel.Guild.Id);
+            startLang = data["StartLang"].ToString();
+            SocketTextChannel endChannel = channel.Guild.GetTextChannel(Convert.ToUInt64(data["EndChannel"].ToString()));
+            endLang = data["EndLang"].ToString();
             return endChannel;
             // string translated = _papago.translate(startLang, endLang, msg.Content);
         }
