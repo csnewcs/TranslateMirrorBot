@@ -18,7 +18,7 @@ namespace mirrorbot
         int papagoTranslatedText = 0; //하루 1만자
         int kakaoiTranslatedText = 0; //하루 5만자
         JObject lang;
-        DateTime endTime;
+        int lastday = 0;
 
         public Translator(string naverId, string naverSecret, string kakaoKey)
         {
@@ -26,15 +26,16 @@ namespace mirrorbot
             NaverSecret = naverSecret;
             KakaoKey = kakaoKey;
             lang = JObject.Parse(File.ReadAllText("translatorcode.json"));
+            lastday = DateTime.Now.Day;
         }
         public JObject translate(string source, string target, string text)
         {
             DateTime dt = DateTime.Now;
-            if(dt.Date != endTime.Date)
+            if(dt.Day != lastday)
             {
                 (papago, kakaoi) = (true, true);
                 (papagoTranslatedText, kakaoiTranslatedText) = (0, 0);
-                endTime = dt;
+                lastday = dt.Day;
             }
             JObject result = new JObject();
             
@@ -50,7 +51,6 @@ namespace mirrorbot
                     papago = false;
                     result.Add("translated", kakaoITranslater(lang[source]["kakaoi"].ToString(), lang[target]["kakaoi"].ToString(), text));
                     result.Add("translator", "Kakao i Translator");
-                    endTime = DateTime.Now;
                 }
             }
             else if(kakaoi)
@@ -63,7 +63,6 @@ namespace mirrorbot
                 catch
                 {
                     result.Add("Error", "Today's end");
-                    endTime = DateTime.Now;
                 }
             }
             else

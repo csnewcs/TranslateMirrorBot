@@ -23,7 +23,7 @@ namespace mirrorbot
         
         DiscordSocketClient _client;
         CommandService _command;
-        ServiceProvider _services;
+        Microsoft.Extensions.DependencyInjection.ServiceProvider _services;
         MariaDB _mariaDB;
         JObject _config;
         Store _store;
@@ -40,16 +40,19 @@ namespace mirrorbot
                 _config = JObject.Parse(File.ReadAllText("config.json"));
             }
             DiscordSocketConfig clientConfig = new DiscordSocketConfig{MessageCacheSize = 100};
+
             _services = new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>(new DiscordSocketClient(clientConfig))
                 .AddSingleton<CommandService>(new CommandService())
-                .AddSingleton<SendTranslate>(new SendTranslate(new Translator(_config["naverId"].ToString(), _config["naverSecret"].ToString(), _config["kakaoKey"].ToString())))
+                .AddSingleton<SendTranslate>(new SendTranslate())
+                .AddSingleton<Translator>(new Translator(_config["naverId"].ToString(), _config["naverSecret"].ToString(), _config["kakaoKey"].ToString()))
                 .AddSingleton<Store>(new Store())
                 .AddSingleton<MariaDB>(new MariaDB()).BuildServiceProvider();
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _command = _services.GetRequiredService<CommandService>();
             _store = _services.GetRequiredService<Store>();
             _SendTranslate = _services.GetRequiredService<SendTranslate>();
+            _SendTranslate.setTranslator(_services.GetRequiredService<Translator>());
             _mariaDB = _services.GetRequiredService<MariaDB>();
 
             _client.MessageReceived += messageReceived;

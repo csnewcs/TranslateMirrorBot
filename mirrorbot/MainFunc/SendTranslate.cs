@@ -12,24 +12,28 @@ namespace mirrorbot
     class SendTranslate
     {
         MariaDB db = new MariaDB();
-        Translator papago;
-        public SendTranslate(Translator _papago) => papago = _papago;
+        Translator translator;
+        public SendTranslate(Translator _translator) => translator = _translator;
+        public SendTranslate()
+        {}
+        public void setTranslator(Translator _translator) => translator = _translator;
         public async Task sendToAnotherChannel(SocketGuildChannel channel, SocketUserMessage message)
         {
-            if(!isEnabled(channel)) return;
+            if(!isEnabled(channel) || message.Content == "") return;
             string startLang;
             string endLang;
             SocketTextChannel textChannel = getInfo(channel, out startLang, out endLang);
-            JObject translated = papago.translate(startLang, endLang, message.Content);
+            JObject translated = translator.translate(startLang, endLang, message.Content);
 
+            if(translated["translated"] == null) return;
             var user = message.Author as SocketGuildUser;
             EmbedAuthorBuilder authorBuilder = new EmbedAuthorBuilder()
                 .WithName((user.Nickname == null ? user.Username : user.Nickname) + $", #{channel.Name}")
                 .WithIconUrl(user.GetAvatarUrl());
             EmbedBuilder builder = new EmbedBuilder()
             .WithAuthor(authorBuilder)
-            .AddField($"{startLang} -> {endLang}", translated)
-            .WithAuthor($"Translated By {translated["translator"]}");
+            .AddField($"{startLang} -> {endLang}", translated["translated"])
+            .AddField("Translated By",  $"{translated["translator"]}");
             await textChannel.SendMessageAsync("", false, builder.Build());
         }
         private bool isEnabled(SocketGuildChannel channel)
