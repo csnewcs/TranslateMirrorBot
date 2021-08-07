@@ -5,28 +5,31 @@ using System.Collections.Generic;
 using Discord;
 using Discord.WebSocket;
 using SqlHelper;
+using Newtonsoft.Json.Linq;
 
 namespace mirrorbot
 {
     class SendTranslate
     {
         MariaDB db = new MariaDB();
-        Papago papago;
-        public SendTranslate(Papago _papago) => papago = _papago;
+        Translator papago;
+        public SendTranslate(Translator _papago) => papago = _papago;
         public async Task sendToAnotherChannel(SocketGuildChannel channel, SocketUserMessage message)
         {
             if(!isEnabled(channel)) return;
             string startLang;
             string endLang;
             SocketTextChannel textChannel = getInfo(channel, out startLang, out endLang);
-            string translated = papago.translate(startLang, endLang, message.Content);
+            JObject translated = papago.translate(startLang, endLang, message.Content);
+
             var user = message.Author as SocketGuildUser;
             EmbedAuthorBuilder authorBuilder = new EmbedAuthorBuilder()
                 .WithName((user.Nickname == null ? user.Username : user.Nickname) + $", #{channel.Name}")
                 .WithIconUrl(user.GetAvatarUrl());
             EmbedBuilder builder = new EmbedBuilder()
             .WithAuthor(authorBuilder)
-            .AddField($"{startLang} -> {endLang}", translated);
+            .AddField($"{startLang} -> {endLang}", translated)
+            .WithAuthor($"Translated By {translated["translator"]}");
             await textChannel.SendMessageAsync("", false, builder.Build());
         }
         private bool isEnabled(SocketGuildChannel channel)

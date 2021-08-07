@@ -1,0 +1,50 @@
+{
+    "ko": {
+        "papago": "ko",
+        "kakaoi": "kr"
+    },
+    "en": {
+        "papago": "en",
+        "kakaoi": "en"
+    },
+    "ja": {
+        "papago": "ja",
+        "kakaoi": "jp"
+    },
+    "cn": {
+        "papago": "zh-CN",
+        "kakaoi": "cn"
+    },
+    "vi": {
+        "papago": "vi",
+        "kakaoi": "vi"
+    },
+    "id": {
+        "papago": "id",
+        "kakaoi": "id"
+    },
+    "th": {
+        "papago": "th",
+        "kakaoi": "th"
+    },
+    "de": {
+        "papago": "de",
+        "kakaoi": "de"
+    },
+    "ru": {
+        "papago": "ru",
+        "kakaoi": "ru"
+    },
+    "es": {
+        "papago": "es",
+        "kakaoi": "es"
+    },
+    "it": {
+        "papago": "it",
+        "kakaoi": "it"
+    },
+    "fr": {
+        "papago": "fr",
+        "kakaoi": "fr"
+    }
+}

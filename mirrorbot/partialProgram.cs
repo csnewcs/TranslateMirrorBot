@@ -16,6 +16,8 @@ namespace mirrorbot
             json.Add("naverId", Console.ReadLine());
             Console.WriteLine("네이버 API의 secret을 입력해 주세요");
             json.Add("naverSecret", Console.ReadLine());
+            Console.WriteLine("카카오 애플리케이션의 RestAPIKey를 입력해 주세요");
+            json.Add("kakaoKey", Console.ReadLine());
             File.WriteAllText("config.json", json.ToString());
         }
         async void command(string command)

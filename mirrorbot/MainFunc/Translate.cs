@@ -4,19 +4,75 @@ using System.Text;
 using System.Web;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using SqlHelper;
 
 namespace mirrorbot
 {
-    public class Papago
+    public class Translator
     {
-        readonly string NaverId;
-        readonly string NaverSecret;
-        public Papago(string id, string secret)
+        bool papago = true;
+        bool kakaoi = true;
+        private readonly string NaverId;
+        private readonly string NaverSecret;
+        private readonly string KakaoKey;
+        int papagoTranslatedText = 0; //하루 1만자
+        int kakaoiTranslatedText = 0; //하루 5만자
+        JObject lang;
+        DateTime endTime;
+
+        public Translator(string naverId, string naverSecret, string kakaoKey)
         {
-            NaverId = id;
-            NaverSecret = secret;
+            NaverId = naverId;
+            NaverSecret = naverSecret;
+            KakaoKey = kakaoKey;
+            lang = JObject.Parse(File.ReadAllText("translatorcode.json"));
         }
-        public string translate(string source, string target, string text)
+        public JObject translate(string source, string target, string text)
+        {
+            DateTime dt = DateTime.Now;
+            if(dt.Date != endTime.Date)
+            {
+                (papago, kakaoi) = (true, true);
+                (papagoTranslatedText, kakaoiTranslatedText) = (0, 0);
+                endTime = dt;
+            }
+            JObject result = new JObject();
+            
+            if(papago) 
+            {
+                try
+                {
+                    result.Add("translated", naverPapago(lang[source]["papago"].ToString(), lang[target]["papago"].ToString(), text));
+                    result.Add("translator", "Naver Papago");
+                }
+                catch
+                {
+                    papago = false;
+                    result.Add("translated", kakaoITranslater(lang[source]["kakaoi"].ToString(), lang[target]["kakaoi"].ToString(), text));
+                    result.Add("translator", "Kakao i Translator");
+                    endTime = DateTime.Now;
+                }
+            }
+            else if(kakaoi)
+            {
+                try
+                {
+                    result.Add("translated", kakaoITranslater(lang[source]["kakaoi"].ToString(), lang[target]["kakaoi"].ToString(), text));
+                    result.Add("translator", "Kakao i Translator");
+                }
+                catch
+                {
+                    result.Add("Error", "Today's end");
+                    endTime = DateTime.Now;
+                }
+            }
+            else
+            {
+                result.Add("Error", "Today's end");
+            }
+            return result;
+        }
+        private string naverPapago(string source, string target, string text)
         {
             string[] splitByLine = text.Split('\n');
             string url = "https://openapi.naver.com/v1/papago/n2mt";
@@ -49,8 +105,31 @@ namespace mirrorbot
                 endTranslate[i] = JObject.Parse(result)["message"]["result"]["translatedText"].ToString();
             }
             string translated = string.Join('\n', endTranslate);
-
+            papagoTranslatedText += text.Length;
             return translated;
+        }
+        private string kakaoITranslater(string source, string target, string text)
+        {
+            string url = $"https://dapi.kakao.com/v2/translation/translate?query={text}&src_lang={source}&target_lang={target}";
+            WebClient client = new WebClient();
+            client.Headers.Add("Authorization", "KakaoAK " + KakaoKey);
+            string result = client.DownloadString(url);
+            JArray resultJson = JObject.Parse(result)["translated_text"] as JArray;
+            string turn = "";
+            foreach(JArray line in resultJson)
+            {
+                foreach(JToken token in line)
+                {
+                    turn += token.ToString() + " "; //왜 배열 안에 배열이 있는진 모르겠지만 아무튼
+                }
+                turn += "\n";
+            }
+            kakaoiTranslatedText += text.Length;
+            return turn;
+        }
+        public int[] getTranslatedText()
+        {
+            return new int[] {papagoTranslatedText, kakaoiTranslatedText};
         }
     }
 }

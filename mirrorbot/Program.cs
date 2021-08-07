@@ -43,7 +43,7 @@ namespace mirrorbot
             _services = new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>(new DiscordSocketClient(clientConfig))
                 .AddSingleton<CommandService>(new CommandService())
-                .AddSingleton<SendTranslate>(new SendTranslate(new Papago(_config["naverId"].ToString(), _config["naverSecret"].ToString())))
+                .AddSingleton<SendTranslate>(new SendTranslate(new Translator(_config["naverId"].ToString(), _config["naverSecret"].ToString(), _config["kakaoKey"].ToString())))
                 .AddSingleton<Store>(new Store())
                 .AddSingleton<MariaDB>(new MariaDB()).BuildServiceProvider();
             _client = _services.GetRequiredService<DiscordSocketClient>();
