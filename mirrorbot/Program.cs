@@ -71,19 +71,26 @@ namespace mirrorbot
         }
         private async Task messageReceived(SocketMessage msg)
         {
-            if (msg.Author == _client.CurrentUser) return;
+            if (msg.Author.IsBot || msg.Author.IsWebhook) return;
             if(msg.Channel is SocketGuildChannel)
             {
                 SocketGuildChannel channel = msg.Channel as SocketGuildChannel;
                 SocketGuild guild = channel.Guild;
                 SocketUserMessage message = msg as SocketUserMessage;
-                await _SendTranslate.sendToAnotherChannel(channel, message);
                 int argPos = 0;
-                if(!message.HasStringPrefix("ㅂ!", ref argPos)) return;
+                if(!message.HasStringPrefix("ㅂ!", ref argPos))
+                {
+                    await _SendTranslate.sendToAnotherChannel(channel, message);
+                    return;
+                }
 
                 SocketCommandContext context = new SocketCommandContext(_client, message);
                 var result = await _command.ExecuteAsync(context: context, argPos: argPos, services: _services);
-                if(!result.IsSuccess) await msg.Channel.SendMessageAsync(result.ErrorReason);
+                if(!result.IsSuccess) 
+                {
+                    Console.WriteLine(result.ErrorReason);
+                    // await msg.Channel.SendMessageAsync(result.ErrorReason);
+                }
             }
         }
         private async Task reactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)

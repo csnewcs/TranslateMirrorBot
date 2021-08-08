@@ -25,8 +25,12 @@ namespace mirrorbot
         public async Task getStatus()
         {
             var used = _translator.getTranslatedText(); //{Papago, Kakao i}
-            makeImage(used[0], used[1]);
-            await Context.Channel.SendFileAsync("nowstatus.png");
+            Thread tr = new Thread(() => {
+                var img = makeImage(used[0], used[1]);
+                img.SaveAsPng("nowstatus.png", new PngEncoder());
+                Context.Channel.SendFileAsync("nowstatus.png");
+            });
+            tr.Start();
         }
         private SixLabors.ImageSharp.Image makeImage(int papago, int kakao)
         {
@@ -47,7 +51,6 @@ namespace mirrorbot
                 i.Fill(new Rgba32(0x03, 0xC7, 0x5A), new Rectangle(272, 88, papagoSize, 29));
                 i.Fill(new Rgba32(0xFA, 0xE1, 0), new Rectangle(272, 207, kakaoSize, 29));
             });
-            img.SaveAsPng("nowstatus.png", new PngEncoder());
             return img;
         }
     }

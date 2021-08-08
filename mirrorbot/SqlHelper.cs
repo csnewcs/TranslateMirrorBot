@@ -97,13 +97,17 @@ namespace SqlHelper
             string cmd = $"select * from {table} where {whereColumn} = '{whereData}';";
             // Console.WriteLine(cmd);
             MySqlCommand command = new MySqlCommand(cmd, connection);
-            var reader = command.ExecuteReader();
+            
             object turn = null;
-            while (reader.Read())
+            using(var reader = command.ExecuteReader())
             {
-                turn =  reader[getColumn];
+                while (reader.Read())
+                {
+                    turn = reader[getColumn];
+                    break;
+                }
             }
-            reader.Close();
+            // reader.Close();
             connection.Close();
             return turn;
         }
@@ -114,6 +118,38 @@ namespace SqlHelper
             MySqlCommand command = new MySqlCommand(cmd, connection);
             connection.Close();
             return command.ExecuteReader();
+        }
+        public bool channelExist(ulong guildId)
+        {
+            connection.Open();
+            string cmd = $"select * from guild_{guildId}";
+            MySqlCommand command = new MySqlCommand(cmd, connection);
+            var reader = command.ExecuteReader();
+            bool exists = false;
+            while (reader.Read())
+            {
+                if ((int)reader["EndChannel"] != 0) exists = true;
+                break;
+            }
+            reader.Close();
+            connection.Close();
+            return exists;
+        }
+        public bool dataExist(string table, string column, object data)
+        {
+            connection.Open();
+            string cmd = $"SELECT count(*) as count FROM {table} WHERE {column} LIKE '{data}';";
+            MySqlCommand command = new MySqlCommand(cmd, connection);
+            var reader = command.ExecuteReader();
+            bool exists = false;
+            while (reader.Read())
+            {
+                if ((long)reader["count"] != 0) exists = true;
+                break;
+            }
+            reader.Close();
+            connection.Close();
+            return exists;
         }
     }
 }
