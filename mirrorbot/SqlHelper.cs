@@ -62,7 +62,10 @@ namespace SqlHelper
             sqlString += ");";
             Console.WriteLine(sqlString);
             MySqlCommand command = new MySqlCommand(sqlString, connection);
-            command.ExecuteNonQuery();
+            try
+            {
+                command.ExecuteNonQuery();
+            } catch{}
             connection.Close();
         }
         public void addData(string table, string[] column, object[] data)
@@ -121,6 +124,7 @@ namespace SqlHelper
         }
         public bool channelExist(ulong guildId)
         {
+            if(!tableExits("guild_" + guildId)) return false;
             connection.Open();
             string cmd = $"select * from guild_{guildId}";
             MySqlCommand command = new MySqlCommand(cmd, connection);
@@ -128,7 +132,8 @@ namespace SqlHelper
             bool exists = false;
             while (reader.Read())
             {
-                if ((int)reader["EndChannel"] != 0) exists = true;
+                Console.WriteLine(reader["EndChannel"]);
+                if (reader["EndChannel"].ToString() != "") exists = true;
                 break;
             }
             reader.Close();

@@ -135,7 +135,7 @@ public class Store
             else if(emoji.Name == emojis[3])
             {
                 returnString += "중국어(간체)로 설정했어요.";
-                now.Add("endLang", "zh-CN");
+                now.Add("endLang", "cn");
             }
             else if(emoji.Name == emojis[4])
             {

@@ -23,8 +23,8 @@ namespace mirrorbot
                 await ReplyAsync("이미 이 서버에서 설정 중인 것이 있어요. 그걸 끝내고 새로 설정해 주세요.");
                 return;
             }
-            try
-            {
+            // try
+            // {
                 if(_mariaDB.channelExist(Context.Guild.Id))
                 {
                     await ReplyAsync("일일 사용량 제한으로 인해 서버 하나당 1개의 채널로 제한하고 있어요. 이 채널을 등록하시려면 먼저 기존 채널을 지워주세요.");
@@ -35,7 +35,7 @@ namespace mirrorbot
                     await ReplyAsync("이미 이 채널은 번역 설정이 되어있어요.");
                     return;
                 }
-            } catch{}
+            // } catch{}
             SocketGuildUser guildUser = Context.User as SocketGuildUser;
             if(guildUser.GuildPermissions.Administrator || guildUser.Guild.Owner == guildUser)
             {

@@ -49,7 +49,7 @@ namespace mirrorbot
             SocketGuildUser guildUser = Context.User as SocketGuildUser;
             if(guildUser.GuildPermissions.Administrator || guildUser.Id == guildUser.Guild.OwnerId)
             {
-                if(_db.getData("NoticeGuilds", "ChannelID", "GuildID", Context.Guild.Id.ToString()) == null)
+                if(_db.dataExist("NoticeGuilds", "GuildID", Context.Guild.Id))
                 {
                     await ReplyAsync("이 서버엔 공지가 가는 채널이 없어요.");
                 }
