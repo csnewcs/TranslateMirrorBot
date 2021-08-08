@@ -1,10 +1,11 @@
 # TranslateMirrorBot
-이 봇은 네이버 Papago를 이용하여 한 채널에서 올라온 채팅을 번역해 다른 채널로 옮겨주는 역할을 합니다.
+이 봇은 네이버 Papago와 Kakao i 번역기를 이용하여 한 채널에서 올라온 채팅을 번역해 다른 채널로 옮겨주는 역할을 합니다.
 
 ## 준비물
 - .Net 5
 - 디스코드 봇 토큰
 - 파파고 API 사용 설정된 네이버 Application
+- 카카오 Developers의 Application
 
 ## 프로그램 초기 설정
 1. ```git clone https://github.com/csnewcs/translatemirrorbot```
