@@ -30,7 +30,7 @@ namespace mirrorbot
                     await ReplyAsync("일일 사용량 제한으로 인해 서버 하나당 1개의 채널로 제한하고 있어요. 이 채널을 등록하시려면 먼저 기존 채널을 지워주세요.");
                     return;
                 }
-                if(_mariaDB.getData("guild_" + Context.Guild.Id, "StartChannel", Context.Channel.Id, "StartLang") != null)
+                else if(_mariaDB.getData("guild_" + Context.Guild.Id, "StartChannel", Context.Channel.Id, "StartLang") != null)
                 {
                     await ReplyAsync("이미 이 채널은 번역 설정이 되어있어요.");
                     return;
