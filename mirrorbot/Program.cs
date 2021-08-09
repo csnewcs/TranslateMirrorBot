@@ -30,6 +30,7 @@ namespace mirrorbot
         SendTranslate _SendTranslate;
         public async Task mainAsync()
         {
+            if(!File.Exists("log.txt")) File.WriteAllText("", "log.txt");
             try
             {
                 _config = JObject.Parse(File.ReadAllText("config.json"));
@@ -106,10 +107,12 @@ namespace mirrorbot
         {
             return Task.CompletedTask;
         }
-        private Task log(LogMessage log)
+        private async Task log(LogMessage log)
         {
+            await File.WriteAllTextAsync("log.txt", $"{File.ReadAllText("log.txt")}\n{log.ToString()}");
             Console.WriteLine(log);
-            return Task.CompletedTask;
+            
+            // return Task.CompletedTask;
         }
 
     }
