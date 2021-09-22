@@ -36,5 +36,14 @@ namespace mirrorbot
                 Environment.Exit(0);
             }
         }
+
+        void update()
+        {
+            DateTime dt = DateTime.Now;
+            while(true)
+            {
+
+            }
+        }
     }
 }
