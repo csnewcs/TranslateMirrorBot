@@ -14,11 +14,15 @@ namespace SqlHelper
         {
             string connectString = "server=localhost;Database=translatemirrorbot;Uid=translatemirrorbot";
             connection = new MySqlConnection(connectString);
-            // connection.Open();
+            
         }
         public Dictionary<string, object> getChannelData(ulong channel_id, ulong guild_id)
         {
-            connection.Open();
+
+            try
+            {
+                connection.Open();
+            } catch{}
             string sqlCommand = $"SELECT * FROM guild_{guild_id} WHERE StartChannel = {channel_id}";
             MySqlCommand command = new MySqlCommand(sqlCommand, connection);
             MySqlDataReader reader = command.ExecuteReader();
@@ -36,7 +40,10 @@ namespace SqlHelper
 
         public bool tableExits(string tableName)
         {
-            connection.Open();
+            try
+            {
+                connection.Open();
+            } catch{}
             string hasTableCommand = $"SELECT 1 FROM Information_schema.tables WHERE table_schema='translatemirrorbot' AND table_name='{tableName}';";
             MySqlCommand cmd = new MySqlCommand(hasTableCommand, connection);
             var result = cmd.ExecuteReader();
@@ -52,7 +59,10 @@ namespace SqlHelper
         }
         public void createTable(string tableName, string[] columns)
         {
-            connection.Open();
+            try
+            {
+                connection.Open();
+            } catch{}
             string sqlString = $"create table if not exists {tableName} (";
             foreach(var column in columns)
             {
@@ -70,7 +80,10 @@ namespace SqlHelper
         }
         public void addData(string table, string[] column, object[] data)
         {
-            connection.Open();
+            try
+            {
+                connection.Open();
+            } catch{}
             string cmd = $"INSERT INTO {table} (";
             foreach (var a in column) cmd += a + ",";
             cmd = cmd.Substring(0, cmd.Length - 1);
@@ -88,7 +101,10 @@ namespace SqlHelper
         }
         public void removeData(string table, string where, object whereData)
         {
-            connection.Open();
+            try
+            {
+                connection.Open();
+            } catch{}
             string cmd = $"DELETE FROM {table} WHERE {where}='{whereData}';";
             MySqlCommand command = new MySqlCommand(cmd, connection);
             command.ExecuteNonQuery();
@@ -96,7 +112,10 @@ namespace SqlHelper
         }
         public object getData(string table, string whereColumn, object whereData, string getColumn)
         {
-            connection.Open();
+            try
+            {
+                connection.Open();
+            } catch{}
             string cmd = $"select * from {table} where {whereColumn} = '{whereData}';";
             // Console.WriteLine(cmd);
             MySqlCommand command = new MySqlCommand(cmd, connection);
@@ -116,7 +135,10 @@ namespace SqlHelper
         }
         public MySqlDataReader getAllTableData(string table)
         {
-            connection.Open();
+            try
+            {
+                connection.Open();
+            } catch{}
             string cmd = $"select * from {table};";
             MySqlCommand command = new MySqlCommand(cmd, connection);
             connection.Close();
@@ -125,7 +147,10 @@ namespace SqlHelper
         public bool channelExist(ulong guildId)
         {
             if(!tableExits("guild_" + guildId)) return false;
-            connection.Open();
+            try
+            {
+                connection.Open();
+            } catch{}
             string cmd = $"select * from guild_{guildId}";
             MySqlCommand command = new MySqlCommand(cmd, connection);
             var reader = command.ExecuteReader();
@@ -142,7 +167,10 @@ namespace SqlHelper
         }
         public bool dataExist(string table, string column, object data)
         {
-            connection.Open();
+            try
+            {
+                connection.Open();
+            } catch{}
             string cmd = $"SELECT count(*) as count FROM {table} WHERE {column} LIKE '{data}';";
             MySqlCommand command = new MySqlCommand(cmd, connection);
             var reader = command.ExecuteReader();
