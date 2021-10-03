@@ -14,16 +14,15 @@ namespace SqlHelper
         {
             string connectString = "server=localhost;Database=translatemirrorbot;Uid=translatemirrorbot";
             connection = new MySqlConnection(connectString);
-            
+            connection.Open();
         }
         public Dictionary<string, object> getChannelData(ulong channel_id, ulong guild_id)
         {
-
+            string sqlCommand = $"SELECT * FROM guild_{guild_id} WHERE StartChannel = {channel_id}";
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
-            string sqlCommand = $"SELECT * FROM guild_{guild_id} WHERE StartChannel = {channel_id}";
             MySqlCommand command = new MySqlCommand(sqlCommand, connection);
             MySqlDataReader reader = command.ExecuteReader();
             Dictionary<string, object> channelData = new Dictionary<string, object>();
@@ -34,7 +33,7 @@ namespace SqlHelper
                 channelData.Add("EndLang", reader["EndLang"]);
             }
             reader.Close();
-            connection.Close();
+            // connection.Close();
             return channelData;
         }
 
@@ -42,7 +41,7 @@ namespace SqlHelper
         {
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
             string hasTableCommand = $"SELECT 1 FROM Information_schema.tables WHERE table_schema='translatemirrorbot' AND table_name='{tableName}';";
             MySqlCommand cmd = new MySqlCommand(hasTableCommand, connection);
@@ -54,14 +53,14 @@ namespace SqlHelper
                 break;
             }
             result.Close();
-            connection.Close();
+            // connection.Close();
             return exists;
         }
         public void createTable(string tableName, string[] columns)
         {
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
             string sqlString = $"create table if not exists {tableName} (";
             foreach(var column in columns)
@@ -76,13 +75,13 @@ namespace SqlHelper
             {
                 command.ExecuteNonQuery();
             } catch{}
-            connection.Close();
+            // connection.Close();
         }
         public void addData(string table, string[] column, object[] data)
         {
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
             string cmd = $"INSERT INTO {table} (";
             foreach (var a in column) cmd += a + ",";
@@ -97,24 +96,24 @@ namespace SqlHelper
             
             MySqlCommand command = new MySqlCommand(cmd, connection);
             command.ExecuteNonQuery();
-            connection.Close();
+            // connection.Close();
         }
         public void removeData(string table, string where, object whereData)
         {
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
             string cmd = $"DELETE FROM {table} WHERE {where}='{whereData}';";
             MySqlCommand command = new MySqlCommand(cmd, connection);
             command.ExecuteNonQuery();
-            connection.Close();
+            // connection.Close();
         }
         public object getData(string table, string whereColumn, object whereData, string getColumn)
         {
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
             string cmd = $"select * from {table} where {whereColumn} = '{whereData}';";
             // Console.WriteLine(cmd);
@@ -130,18 +129,19 @@ namespace SqlHelper
                 }
             }
             // reader.Close();
-            connection.Close();
+            
+            // connection.Close();
             return turn;
         }
         public MySqlDataReader getAllTableData(string table)
         {
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
             string cmd = $"select * from {table};";
             MySqlCommand command = new MySqlCommand(cmd, connection);
-            connection.Close();
+            // connection.Close();
             return command.ExecuteReader();
         }
         public bool channelExist(ulong guildId)
@@ -149,7 +149,7 @@ namespace SqlHelper
             if(!tableExits("guild_" + guildId)) return false;
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
             string cmd = $"select * from guild_{guildId}";
             MySqlCommand command = new MySqlCommand(cmd, connection);
@@ -162,14 +162,14 @@ namespace SqlHelper
                 break;
             }
             reader.Close();
-            connection.Close();
+            // connection.Close();
             return exists;
         }
         public bool dataExist(string table, string column, object data)
         {
             try
             {
-                connection.Open();
+                // connection.Open();
             } catch{}
             string cmd = $"SELECT count(*) as count FROM {table} WHERE {column} LIKE '{data}';";
             MySqlCommand command = new MySqlCommand(cmd, connection);
@@ -181,7 +181,7 @@ namespace SqlHelper
                 break;
             }
             reader.Close();
-            connection.Close();
+            // connection.Close();
             return exists;
         }
     }
