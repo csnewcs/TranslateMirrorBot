@@ -110,6 +110,7 @@ namespace mirrorbot
             Thread thread = new Thread(() => {
                 update(_config["koreanBotListToken"].ToString(), _client.CurrentUser.Id);
             });
+            thread.Start();
             return Task.CompletedTask;
         }
         private Task log(LogMessage log)
