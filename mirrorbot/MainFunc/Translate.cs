@@ -18,7 +18,8 @@ namespace mirrorbot
         int papagoTranslatedText = 0; //하루 1만자
         int kakaoiTranslatedText = 0; //하루 5만자
         JObject lang;
-        int lastday = 0;
+        DateTime lastday;
+        MariaDB _db;
 
         public Translator(string naverId, string naverSecret, string kakaoKey)
         {
@@ -26,16 +27,22 @@ namespace mirrorbot
             NaverSecret = naverSecret;
             KakaoKey = kakaoKey;
             lang = JObject.Parse(File.ReadAllText("translatorcode.json"));
-            lastday = DateTime.Now.Day;
+            lastday = DateTime.Now;
+            // _db = db;
+        }
+        public void SetDB(MariaDB db)
+        {
+            _db = db;
         }
         public JObject translate(string source, string target, string text)
         {
             DateTime dt = DateTime.Now;
-            if(dt.Day != lastday)
+            if(dt != lastday)
             {
                 (papago, kakaoi) = (true, true);
                 (papagoTranslatedText, kakaoiTranslatedText) = (0, 0);
-                lastday = dt.Day;
+                lastday = dt;
+                if(!_db.dataExist("Used", "day", dt.ToString("yyyy-MM-dd"))) _db.addData("Used", new string[] {"day", "papago", "kakao"}, new string[] { dt.ToString("yyyy-MM-dd"), "0", "0" });
             }
             JObject result = new JObject();
             
@@ -104,6 +111,7 @@ namespace mirrorbot
                 endTranslate[i] = JObject.Parse(result)["message"]["result"]["translatedText"].ToString();
             }
             string translated = string.Join('\n', endTranslate);
+            _db.updateData("Used", "papago", (int)_db.getData("Used", "day", $"{lastday.Year}-{lastday.Month}-{lastday.Day}", "papago") + text.Length, "day" , $"{lastday.Year}-{lastday.Month}-{lastday.Day}");
             papagoTranslatedText += text.Length;
             return translated;
         }
@@ -123,12 +131,14 @@ namespace mirrorbot
                 }
                 turn += "\n";
             }
+            _db.updateData("Used", "kakao", (int)_db.getData("Used", "day", $"{lastday.Year}-{lastday.Month}-{lastday.Day}", "kakao") + text.Length, "day" , $"{lastday.Year}-{lastday.Month}-{lastday.Day}");
             kakaoiTranslatedText += text.Length;
             return turn;
         }
-        public int[] getTranslatedText()
-        {
-            return new int[] {papagoTranslatedText, kakaoiTranslatedText};
-        }
+        // public int[] getTranslatedText()
+        // {
+        //     return new int[] { , kakaoiTranslatedText };
+        //     // return new int[] {papagoTranslatedText, kakaoiTranslatedText};
+        // }
     }
 }

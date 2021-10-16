@@ -13,13 +13,17 @@ namespace mirrorbot
     {
         public async Task sendNotice(MariaDB db, DiscordSocketClient client,string message)
         {
-            var reader = db.getAllTableData("NoticeGuilds");
-            Dictionary<ulong, ulong> dict = new Dictionary<ulong, ulong>(); //GuildID, ChannelID
-            while(reader.Read())
+            var dict = db.allGuildAndChannel("NoticeGuilds");
+            if(dict[0] == 0)
             {
-                dict.Add(Convert.ToUInt64(reader["GuildID"]), Convert.ToUInt64(reader["ChannelID"]));
+                return;
             }
-            reader.Close();
+            // Dictionary<ulong, ulong> dict = new Dictionary<ulong, ulong>(); //GuildID, ChannelID
+            // while(reader.Read())
+            // {
+            //     dict.Add(Convert.ToUInt64(reader["GuildID"]), Convert.ToUInt64(reader["ChannelID"]));
+            // }
+            // reader.Close();
             int succeed = 0;
             int failed = 0;
             foreach(var keyvalue in dict)

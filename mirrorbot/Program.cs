@@ -53,8 +53,9 @@ namespace mirrorbot
             _command = _services.GetRequiredService<CommandService>();
             _store = _services.GetRequiredService<Store>();
             _SendTranslate = _services.GetRequiredService<SendTranslate>();
-            _SendTranslate.setTranslator(_services.GetRequiredService<Translator>());
             _mariaDB = _services.GetRequiredService<MariaDB>();
+            _services.GetRequiredService<Translator>().SetDB(_mariaDB);
+            _SendTranslate.setRequires(_services.GetRequiredService<Translator>(), _mariaDB);
 
             _client.MessageReceived += messageReceived;
             _client.ReactionAdded += reactionAdded;
@@ -107,11 +108,10 @@ namespace mirrorbot
         {
             return Task.CompletedTask;
         }
-        private async Task log(LogMessage log)
+        private Task log(LogMessage log)
         {
-            await File.WriteAllTextAsync("log.txt", $"{File.ReadAllText("log.txt")}\n{log.ToString()}");
-            Console.WriteLine(log);
-            
+            Logging.Log.log(log.Message);
+            return Task.CompletedTask;
             // return Task.CompletedTask;
         }
 

@@ -11,12 +11,12 @@ namespace mirrorbot
 {
     class SendTranslate
     {
-        MariaDB db = new MariaDB();
+        MariaDB db;
         Translator translator;
-        public SendTranslate(Translator _translator) => translator = _translator;
-        public SendTranslate()
-        {}
-        public void setTranslator(Translator _translator) => translator = _translator;
+        public SendTranslate(Translator _translator, MariaDB _db) {translator = _translator; db = _db;}
+        public SendTranslate() {}
+        public void setRequires(Translator _translator, MariaDB _db) {translator = _translator; db = _db;}
+        
         public async Task sendToAnotherChannel(SocketGuildChannel channel, SocketUserMessage message)
         {
             if(!isEnabled(channel) || message.Content == "") return;

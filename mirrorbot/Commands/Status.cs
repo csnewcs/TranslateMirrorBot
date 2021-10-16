@@ -12,19 +12,21 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
-
+using SqlHelper;
 
 namespace mirrorbot
 {
     public class Status : ModuleBase<SocketCommandContext>
     {
         private readonly Translator _translator;
-        public Status(Translator translator) => _translator = translator;
+        private readonly MariaDB _db;
+        public Status(Translator translator, MariaDB db) {_translator = translator; _db = db;}
 
         [Command("현황")]
         public async Task getStatus()
         {
-            var used = _translator.getTranslatedText(); //{Papago, Kakao i}
+            int[] used = _db.getUsed();
+            // var used = _translator.getTranslatedText(); //{Papago, Kakao i}
             Thread tr = new Thread(() => {
                 var img = makeImage(used[0], used[1]);
                 img.SaveAsPng("nowstatus.png", new PngEncoder());
