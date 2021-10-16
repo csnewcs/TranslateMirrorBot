@@ -328,7 +328,7 @@ namespace SqlHelper
         }
         public int[] getUsed()
         {
-            int[] used = new int[2];
+            int[] used = new int[2] {0, 0};
             DateTime dt = DateTime.Now;
             string cmd = $"select * from Used where day='{dt.ToString("yyyy-MM-dd")}';";
             try
