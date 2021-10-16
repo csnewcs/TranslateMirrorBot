@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Threading;
+using SharpKoreanBots.Bot;
 
 namespace mirrorbot
 {
@@ -37,12 +39,18 @@ namespace mirrorbot
             }
         }
 
-        void update()
+        void update(string token, ulong id)
         {
-            DateTime dt = DateTime.Now;
+            SharpKoreanBots.KoreanBotsClient client = new SharpKoreanBots.KoreanBotsClient(token);
+            var botInfo = client.GetBot(id);
+            botInfo.Token = token;
+            // DateTime dt = DateTime.Now;
             while(true)
             {
-
+                botInfo.ServerCount = _client.Guilds.Count;
+                Logging.Log.log($"봇 정보 업데이트 / 서버 수: {_client.Guilds.Count}");
+                botInfo.Update();
+                Thread.Sleep(3600000); //1시간 새로고침
             }
         }
     }

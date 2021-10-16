@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Net;
@@ -106,6 +107,9 @@ namespace mirrorbot
         }
         private Task ready()
         {
+            Thread thread = new Thread(() => {
+                update(_config["koreanBotListToken"].ToString(), _client.CurrentUser.Id);
+            });
             return Task.CompletedTask;
         }
         private Task log(LogMessage log)
