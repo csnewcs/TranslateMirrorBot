@@ -41,7 +41,7 @@ namespace mirrorbot
 
         void update(string token, ulong id)
         {
-            SharpKoreanBots.KoreanBotsClient client = new SharpKoreanBots.KoreanBotsClient(token);
+            SharpKoreanBots.KoreanBotsClient client = new SharpKoreanBots.KoreanBotsClient();
             var botInfo = client.GetBot(id);
             botInfo.Token = token;
             // DateTime dt = DateTime.Now;

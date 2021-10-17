@@ -107,6 +107,11 @@ namespace mirrorbot
         }
         private Task ready()
         {
+            DirectoryInfo info = new DirectoryInfo("./Log");
+            if(!info.Exists)
+            {
+                info.Create();
+            }
             Thread thread = new Thread(() => {
                 update(_config["koreanBotListToken"].ToString(), _client.CurrentUser.Id);
             });
