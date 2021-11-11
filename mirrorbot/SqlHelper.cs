@@ -237,9 +237,13 @@ namespace SqlHelper
             // connection.Close();
             // return command.ExecuteReader();
         }
-        public bool channelExist(ulong guildId)
+        public bool channelExist(ulong guildId, out int channels)
         {
-            if(!tableExits("guild_" + guildId)) return false;
+            channels = 0;
+            if(!tableExits("guild_" + guildId)) 
+            {
+                return false;
+            }
             try
             {
                 connection.Open();
@@ -247,14 +251,16 @@ namespace SqlHelper
                 MySqlCommand command = new MySqlCommand(cmd, connection);
                 var reader = command.ExecuteReader();
                 bool exists = false;
-
                 try
                 {
                     while (reader.Read())
                     {
                         Console.WriteLine(reader["EndChannel"]);
-                        if (reader["EndChannel"].ToString() != "") exists = true;
-                        break;
+                        if (reader["EndChannel"].ToString() != "") {
+                            exists = true;
+                            channels++;
+                        }
+
                     }
                     reader.Close();
                     connection.Close();

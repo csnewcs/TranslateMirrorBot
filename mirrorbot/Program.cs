@@ -26,28 +26,19 @@ namespace mirrorbot
         CommandService _command;
         Microsoft.Extensions.DependencyInjection.ServiceProvider _services;
         MariaDB _mariaDB;
-        JObject _config;
         Store _store;
         SendTranslate _SendTranslate;
         public async Task mainAsync()
         {
-            if(!File.Exists("log.txt")) File.WriteAllText("log.txt", "");
-            try
-            {
-                _config = JObject.Parse(File.ReadAllText("config.json"));
-            }
-            catch
-            {
-                init();
-                _config = JObject.Parse(File.ReadAllText("config.json"));
-            }
+            Config.Init();
+            // if(!File.Exists("log.txt")) File.WriteAllText("log.txt", "");
             DiscordSocketConfig clientConfig = new DiscordSocketConfig{MessageCacheSize = 100};
 
             _services = new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>(new DiscordSocketClient(clientConfig))
                 .AddSingleton<CommandService>(new CommandService())
                 .AddSingleton<SendTranslate>(new SendTranslate())
-                .AddSingleton<Translator>(new Translator(_config["naverId"].ToString(), _config["naverSecret"].ToString(), _config["kakaoKey"].ToString()))
+                .AddSingleton<Translator>(new Translator(Config.NaverId, Config.NaverSecret, Config.KakaoKey))
                 .AddSingleton<Store>(new Store())
                 .AddSingleton<MariaDB>(new MariaDB()).BuildServiceProvider();
             _client = _services.GetRequiredService<DiscordSocketClient>();
@@ -62,7 +53,7 @@ namespace mirrorbot
             _client.ReactionAdded += reactionAdded;
             _client.Log += log;
             _client.Ready += ready;
-            await _client.LoginAsync(TokenType.Bot, _config["token"].ToString());
+            await _client.LoginAsync(TokenType.Bot, Config.DiscordToken);
             await _client.StartAsync();
             await _client.SetGameAsync("ㅂ!도움 으로 도움말 보기");
             await _command.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
@@ -112,10 +103,13 @@ namespace mirrorbot
             {
                 info.Create();
             }
-            Thread thread = new Thread(() => {
-                update(_config["koreanBotListToken"].ToString(), _client.CurrentUser.Id);
-            });
-            thread.Start();
+            if(Config.KoreanBotListToken != "")
+            {
+                Thread thread = new Thread(() => {
+                    update(Config.KoreanBotListToken, _client.CurrentUser.Id);
+                });
+                thread.Start();
+            }
             return Task.CompletedTask;
         }
         private Task log(LogMessage log)

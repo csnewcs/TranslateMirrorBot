@@ -217,7 +217,8 @@ public class Store
         }
         catch(Exception e)
         {
-            Console.WriteLine(e);
+            Logging.Log.log(e.ToString());
+            // Console.WriteLine(e);
         }
     }
 }
