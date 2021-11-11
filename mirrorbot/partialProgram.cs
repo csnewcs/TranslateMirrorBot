@@ -22,10 +22,11 @@ namespace mirrorbot
             Console.WriteLine("카카오 애플리케이션의 RestAPIKey를 입력해 주세요");
             json.Add("kakaoKey", Console.ReadLine());
             Console.WriteLine("서버당 번역 채널을 몇 개로 제한할까요? (기본: 1)");
-            json.Add("channelLimit", int.Parse(Console.ReadLine()));
+            string limit = Console.ReadLine();
+            json.Add("channelLimit", limit == "" ? 1 : int.Parse(limit));
             Console.WriteLine("한국 디스코드 리스트에 등록된 봇인가요? (있다면 토큰을 입력해 주세요. 없으면 Enter를 눌러 주세요.)");
             json.Add("koreanBotListToken", Console.ReadLine());
-            Console.WriteLine($"초기 설정이 완료되었습니다.\n====================설정값====================\n디스코드\n\t토큰: {json["token"]}\n\t한국 디스코드 봇 리스트 등록 여부: {json["koreanBotListToken"]}\n\t서버당 채널 제한: {json["channelList"]}\n번역\n\t네이버 API ID: {json["naverId"]}\n\t네이버 API Secret: {json["naverSecret"]}\n\t카카오 RestAPI Key: {json["kakaoKey"]}\n===========================================");
+            Console.WriteLine($"초기 설정이 완료되었습니다.\n====================설정값====================\n디스코드\n\t토큰: {json["token"]}\n\t한국 디스코드 봇 리스트 등록 여부: {json["koreanBotListToken"]}\n\t서버당 채널 제한: {json["channelLimit"]}\n번역\n\t네이버 API ID: {json["naverId"]}\n\t네이버 API Secret: {json["naverSecret"]}\n\t카카오 RestAPI Key: {json["kakaoKey"]}\n===========================================");
             File.WriteAllText("config.json", json.ToString());
 
         }
@@ -53,9 +54,15 @@ namespace mirrorbot
             // DateTime dt = DateTime.Now;
             while(true)
             {
-                botInfo.ServerCount = _client.Guilds.Count;
-                Logging.Log.log($"봇 정보 업데이트 / 서버 수: {_client.Guilds.Count}");
-                botInfo.Update();
+                try
+                {
+                    botInfo.ServerCount = _client.Guilds.Count;
+                    Logging.Log.log($"봇 정보 업데이트 / 서버 수: {_client.Guilds.Count}");
+                    botInfo.Update();
+                }
+                catch{
+
+                }
                 Thread.Sleep(3600000); //1시간 새로고침
             }
         }
