@@ -174,7 +174,7 @@ namespace SqlHelper
         {
             if(!tableExits(table))
             {
-                return false;
+                return null;
             }
             try
             {
