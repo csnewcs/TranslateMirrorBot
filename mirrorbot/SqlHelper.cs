@@ -172,6 +172,10 @@ namespace SqlHelper
         }
         public object getData(string table, string whereColumn, object whereData, string getColumn)
         {
+            if(!tableExits(table))
+            {
+                return false;
+            }
             try
             {
                 string cmd = $"select * from {table} where {whereColumn} = '{whereData}';";
