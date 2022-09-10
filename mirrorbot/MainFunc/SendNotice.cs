@@ -14,7 +14,7 @@ namespace mirrorbot
         public async Task sendNotice(MariaDB db, DiscordSocketClient client,string message)
         {
             var dict = db.allGuildAndChannel("NoticeGuilds");
-            if(dict[0] == 0)
+            if(dict.Count == 0)
             {
                 return;
             }

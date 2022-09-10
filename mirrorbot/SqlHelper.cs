@@ -218,7 +218,7 @@ namespace SqlHelper
                     Dictionary<ulong, ulong> guildAndChannel = new Dictionary<ulong, ulong>();
                     while (reader.Read())
                     {
-                        guildAndChannel.Add((ulong)reader["StartChannel"], (ulong)reader["EndChannel"]);
+                        guildAndChannel.Add((ulong)reader["GuildID"], (ulong)reader["ChannelID"]);
                     }
                     reader.Close();
                     connection.Close();
